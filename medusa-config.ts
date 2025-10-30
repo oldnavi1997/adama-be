@@ -1,4 +1,4 @@
-import { loadEnv, defineConfig } from '@medusajs/framework/utils'
+import {loadEnv, defineConfig, ContainerRegistrationKeys} from '@medusajs/framework/utils'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
@@ -39,6 +39,24 @@ module.exports = defineConfig({
           url: process.env.REDIS_URL,
         },
       },
+    },
+    {
+      resolve: '@medusajs/medusa/payment',
+      options: {
+        providers: [
+          {
+            resolve: '@nicogorga/medusa-payment-mercadopago/providers/mercado-pago',
+            id: 'mercadopago',
+            options: {
+              accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
+              webhookSecret: process.env.MERCADOPAGO_WEBHOOK_SECRET,
+            },
+            dependencies: [
+              ContainerRegistrationKeys.LOGGER
+            ]
+          }
+        ],
+      }
     },
   ],
 })
